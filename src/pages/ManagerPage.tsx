@@ -1,13 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import { getDashboard, getReviewQueue, type DashboardShiftRow, type DashboardSummary, type IssueRow, type Identity } from '../api/gasClient'
 import StatusBadge from '../components/StatusBadge'
+import ScheduleTab from './ScheduleTab'
 
 interface ManagerPageProps {
   identity: Identity
   onLogout: () => void
 }
 
-type Tab = 'today' | 'reviews'
+type Tab = 'today' | 'reviews' | 'schedule'
 
 const STATUS_LABELS: Record<string, string> = {
   planned: 'Запланирована',
@@ -38,13 +39,15 @@ export default function ManagerPage({ identity, onLogout }: ManagerPageProps) {
         {/* Табы */}
         <div className="flex border-b border-gray-100">
           <TabButton active={tab === 'today'} onClick={() => setTab('today')}>Сегодня</TabButton>
+          <TabButton active={tab === 'schedule'} onClick={() => setTab('schedule')}>Расписание</TabButton>
           <TabButton active={tab === 'reviews'} onClick={() => setTab('reviews')}>Проверки</TabButton>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto">
-        {tab === 'today' && <TodayTab />}
-        {tab === 'reviews' && <ReviewsTab />}
+      <main className="flex-1 overflow-hidden flex flex-col">
+        {tab === 'today' && <div className="flex-1 overflow-y-auto"><TodayTab /></div>}
+        {tab === 'schedule' && <ScheduleTab identity={identity} />}
+        {tab === 'reviews' && <div className="flex-1 overflow-y-auto"><ReviewsTab /></div>}
       </main>
     </div>
   )
